@@ -5,7 +5,7 @@
 ## Usage: cli
 ```sh
 pip install xps.browserhist
-browserhist
+browserhist sync
 ```
 
 
@@ -13,5 +13,5 @@ browserhist
 ```sh
 pipenv install
 pip install --editable .
-browserhist
+browserhist sync
 ```
