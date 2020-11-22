@@ -15,8 +15,8 @@ def cli():
     pass
 
 @cli.command()
+@click.option('-h', '--host', default="localhost", type=str)
+@click.option('-p', '--port', default=9200, type=int)
 @click.pass_context
-def sync(ctx):
-    host = "xps"
-    port = 9200
+def sync(ctx, host, port):
     sync_browser_history(host, port)

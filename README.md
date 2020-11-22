@@ -12,6 +12,7 @@ browserhist sync
 ## Dev
 ```sh
 pipenv install
+pipenv shell
 pip install --editable .
 browserhist sync
 ```
