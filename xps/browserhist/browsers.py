@@ -31,7 +31,7 @@ class Browser:
 
 class Firefox(Browser):
     SQL = """
-    SELECT url, title, datetime((visit_date/1000000), 'unixepoch', 'utc') AS visit_date 
+    SELECT url, title, datetime((visit_date/1000000), 'unixepoch', 'localtime') AS visit_date 
     FROM moz_places INNER JOIN moz_historyvisits on moz_historyvisits.place_id = moz_places.id ORDER BY visit_date ASC
     """
 
@@ -59,7 +59,7 @@ class Firefox(Browser):
 
 class Chromium(Browser):
     SQL = """
-    SELECT urls.url, title, datetime((visit_time/1000000)-11644473600, 'unixepoch', 'utc') 
+    SELECT urls.url, title, datetime((visit_time/1000000)-11644473600, 'unixepoch', 'localtime') 
     AS last_visit_time FROM urls INNER JOIN visits on urls.id=visits.url ORDER BY last_visit_time ASC
     """
 

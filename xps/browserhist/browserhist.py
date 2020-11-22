@@ -9,6 +9,9 @@ from datetime import datetime as dt
 from elasticsearch import helpers
 import platform
 from dateutil import tz
+import hashlib
+from copy import deepcopy
+
 from .browsers import Firefox, Chromium
 
 LOGGER = logging.getLogger(__name__)
@@ -58,31 +61,37 @@ def get_database_paths():
     elif platform_code == 1:
         return fetch_macos_paths()
 
+
 def massage_es(row, browser_type, index, profile, node):
     url, title, ts = row
-    ts_utc = parse(ts)
-    ts = ts_utc.astimezone(tz.tzlocal())
-    ts = ts + ts.utcoffset()
-    hour = ts.hour
-    weekday = ts.weekday()
-    domain = urlparse(url).netloc.lstrip('www.')
-    
+    ts_local = parse(ts)
+    ts_local = ts_local.replace(tzinfo=tz.tzlocal())
+    ts_utc = ts_local.astimezone(tz.tzutc())
+    domain = urlparse(url).netloc.lstrip("www.")
+    unique_str = url + str(ts_utc)
+    hash_object = hashlib.md5(unique_str.encode()).hexdigest()
+
     return {
-        '_index': index,
-        '_source': {
-            'url': url,
-            'title': title,
-            'node': node,
-            'timestamp': ts_utc,
-            'hour': hour,
-            'weekday': weekday,
-            'month': ts.month,
-            'year': ts.year,
-            'domain': domain,
-            'profile': profile,
-            'browser': browser_type
-        }
+        "_index": index,
+        "_id": hash_object,
+        "_source": {
+            "url": url,
+            "title": title,
+            "node": node,
+            "timestamp": ts_utc,
+            "domain": domain,
+            "profile": profile,
+            "browser": browser_type,
+            "local": {
+                "timestamp": ts_local,
+                "hour": ts_local.hour,
+                "weekday": ts_local.weekday(),
+                "month": ts_local.strftime('%b'),
+                "year": ts_local.year,
+            },
+        },
     }
+
 
 def sync_to_es(es, history, browser_type, profile, node):
     browser_type = browser_type.lower()
@@ -93,8 +102,9 @@ def sync_to_es(es, history, browser_type, profile, node):
         body = massage_es(row, browser_type, index, profile, node)
         actions.append(body)
     LOGGER.info(f"Committing to /{index}")
-    es.indices.delete(index=index, ignore=[400, 404])
+    # es.indices.delete(index=index, ignore=[400, 404])
     helpers.bulk(es, actions, chunk_size=10000)
+
 
 def sync_browser_history(host, port, user=None, pwd=None):
     http_auth = (user, pwd) if pwd else None

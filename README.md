@@ -4,7 +4,7 @@
 
 ## Usage: cli
 ```sh
-pip install xps.browserhist
+pip install git+<url>
 browserhist sync
 ```
 
