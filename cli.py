@@ -17,4 +17,6 @@ def cli():
 @cli.command()
 @click.pass_context
 def sync(ctx):
-    sync_browser_history()
+    host = "xps"
+    port = 9200
+    sync_browser_history(host, port)

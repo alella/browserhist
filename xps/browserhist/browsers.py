@@ -42,7 +42,18 @@ class Firefox(Browser):
         for path in glob.glob(
             os.path.join(home, ".mozilla", "firefox", "*", "places.sqlite")
         ):
-            profile = path.split('/')[5].lower().replace(' ', '')
+            profile = path.split('/')[-2].lower().replace(' ', '')
+            paths.append((path, cls, profile))
+        return paths
+
+    @classmethod
+    def fetch_macos_path(cls):
+        home = os.path.expanduser("~")
+        paths = []  # (path, browser_class, profile)
+        for path in glob.glob(
+            os.path.join(home, "Library/Application Support/Firefox/Profiles", "*", "places.sqlite")
+        ):
+            profile = path.split('/')[-2].lower().replace(' ', '')
             paths.append((path, cls, profile))
         return paths
 
@@ -57,6 +68,15 @@ class Chromium(Browser):
         home = os.path.expanduser("~")
         paths = []  # (path, browser_class, profile)
         for path in glob.glob(os.path.join(home, ".config", "chromium", "*", "History")):
-            profile = path.split('/')[5].lower().replace(' ', '')
+            profile = path.split('/')[-2].lower().replace(' ', '')
+            paths.append((path, cls, profile))
+        return paths
+
+    @classmethod
+    def fetch_macos_path(cls):
+        home = os.path.expanduser("~")
+        paths = []  # (path, browser_class, profile)
+        for path in glob.glob(os.path.join(home, "Library/Application Support/Google/Chrome/", "*", "History")):
+            profile = path.split('/')[-2].lower().replace(' ', '')
             paths.append((path, cls, profile))
         return paths

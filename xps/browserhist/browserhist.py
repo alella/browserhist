@@ -42,10 +42,20 @@ def fetch_linux_paths():
     return paths
 
 
+def fetch_macos_paths():
+    browsers = [Firefox, Chromium]
+    paths = []
+    for browser in browsers:
+        paths.extend(browser.fetch_macos_path())
+    return paths
+
+
 def get_database_paths():
     platform_code = _identify_platform()
     if platform_code == 0:
         return fetch_linux_paths()
+    elif platform_code == 1:
+        return fetch_macos_paths()
 
 def massage_es(row, browser_type, index, profile, node):
     url, title, ts = row
@@ -64,14 +74,15 @@ def massage_es(row, browser_type, index, profile, node):
             'timestamp': ts_utc,
             'hour': hour,
             'weekday': weekday,
+            'month': ts.month,
+            'year': ts.year,
             'domain': domain,
             'profile': profile,
             'browser': browser_type
         }
     }
 
-def sync_to_es(history, browser_type, profile, node):
-    es = Elasticsearch()
+def sync_to_es(es, history, browser_type, profile, node):
     browser_type = browser_type.lower()
     index = f"browser-{node}-{browser_type}-{profile}"
     actions = []
@@ -83,11 +94,13 @@ def sync_to_es(history, browser_type, profile, node):
     es.indices.delete(index=index, ignore=[400, 404])
     helpers.bulk(es, actions, chunk_size=10000)
 
-def sync_browser_history():
-    node = platform.node()
+def sync_browser_history(host, port, user=None, pwd=None):
+    http_auth = (user, pwd) if pwd else None
+    es = Elasticsearch([host], port=port, http_auth=http_auth)
+    node = platform.node().lower()
     db_pahts = get_database_paths()
     for row in db_pahts:
         db, browser, profile = row
         LOGGER.info(f"Reading {db}")
         history = browser.read(db)
-        sync_to_es(history, browser.__name__, profile, node)
+        sync_to_es(es, history, browser.__name__, profile, node)
