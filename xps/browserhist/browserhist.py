@@ -5,9 +5,10 @@ import logging
 from elasticsearch import Elasticsearch
 from dateutil.parser import parse
 from urllib.parse import urlparse
-from datetime import timedelta as td
+from datetime import datetime as dt
 from elasticsearch import helpers
 import platform
+from dateutil import tz
 from .browsers import Firefox, Chromium
 
 LOGGER = logging.getLogger(__name__)
@@ -60,7 +61,8 @@ def get_database_paths():
 def massage_es(row, browser_type, index, profile, node):
     url, title, ts = row
     ts_utc = parse(ts)
-    ts = ts_utc - td(hours=5)
+    ts = ts_utc.astimezone(tz.tzlocal())
+    ts = ts + ts.utcoffset()
     hour = ts.hour
     weekday = ts.weekday()
     domain = urlparse(url).netloc.lstrip('www.')
