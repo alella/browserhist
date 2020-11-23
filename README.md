@@ -1,10 +1,10 @@
-# lib-xps.browserhist-python
+# xps.browserhist
 
 > Library to fetch local browser data
 
 ## Usage: cli
 ```sh
-pip install "git+http://rasp:3000/alella/lib-xps.browserhist-python.git"
+pip install "git+<git-url-here>"
 browserhist sync
 ```
 
