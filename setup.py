@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name="xps.browserhist",
-    version="0.3.4",
+    version="0.3.5",
     author="Ashoka Lella",
-    py_modules=find_packages(),
+    packages=find_packages(),
     install_requires=[
         "elasticsearch",
         "python-dateutil",

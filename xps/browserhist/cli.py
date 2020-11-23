@@ -2,7 +2,7 @@ import click
 import coloredlogs
 import logging
 
-from xps.browserhist.browserhist import sync_browser_history
+from .browserhist import sync_browser_history
 
 LOGGER_FORMAT = "[%(asctime)s][%(levelname)s][%(name)s]: %(message)s"
 logging.basicConfig(format=LOGGER_FORMAT, level=logging.INFO)
