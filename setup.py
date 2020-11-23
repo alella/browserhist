@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="xps.browserhist",
-    version="0.3.1",
+    version="0.3.2",
     author="Ashoka Lella",
     py_modules=find_packages(),
     install_requires=[

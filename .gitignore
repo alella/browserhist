@@ -1,5 +1,4 @@
 .vscode*
-__*
 *.pyc
 *.egg*
 *.log
