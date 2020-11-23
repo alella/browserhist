@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="xps.browserhist",
-    version="0.3.2",
+    version="0.3.3",
     author="Ashoka Lella",
     py_modules=find_packages(),
     install_requires=[
@@ -13,6 +13,6 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        browserhist=xps.browserhist:cli
+        browserhist=xps.browserhist.cli:cli
     """,
 )
