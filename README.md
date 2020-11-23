@@ -4,7 +4,7 @@
 
 ## Usage: cli
 ```sh
-pip install git+<url>
+pip install "git+http://rasp:3000/alella/lib-xps.browserhist-python.git"
 browserhist sync
 ```
 
