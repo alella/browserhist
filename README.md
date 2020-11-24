@@ -1,18 +1,19 @@
-# xps.browserhist
+# browserhist
 
-> Library to fetch local browser data
+> A CLI tool to fetch local browser data
 
-## Usage: cli
+## Usage:
 ```sh
-pip install "git+<git-url-here>"
-browserhist sync
+pip install "git+https://github.com/alella/browserhist.git"
+
+browserhist --help
 ```
 
 
-## Dev
+## Development
 ```sh
 pipenv install
 pipenv shell
 pip install --editable .
-browserhist sync
+browserhist --help
 ```

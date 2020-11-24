@@ -1,18 +1,22 @@
-import os
 import glob
+import logging
+import os
 import shutil
 import sqlite3
-import logging
 import tempfile
 
 LOGGER = logging.getLogger(__name__)
 
 
+class NotImplementedError(Exception):
+    pass
+
+
 class Browser:
-    SQL = ""
+    SQL = "need to be implemented by inherited browsers"
 
     @classmethod
-    def read(cls, db_path):
+    def read(cls, db_path: str) -> list:
         tmpfile = tempfile.NamedTemporaryFile().name
         shutil.copy(db_path, tmpfile)
         query_result = []
@@ -28,6 +32,14 @@ class Browser:
             os.remove(tmpfile)
         return query_result
 
+    @classmethod
+    def fetch_linux_path(cls) -> list:
+        raise NotImplementedError()
+
+    @classmethod
+    def fetch_macos_path(cls) -> list:
+        raise NotImplementedError()
+
 
 class Firefox(Browser):
     SQL = """
@@ -36,26 +48,35 @@ class Firefox(Browser):
     """
 
     @classmethod
-    def fetch_linux_path(cls):
+    def fetch_linux_path(cls) -> list:
         home = os.path.expanduser("~")
         paths = []  # (path, browser_class, profile)
         for path in glob.glob(
             os.path.join(home, ".mozilla", "firefox", "*", "places.sqlite")
         ):
-            profile = path.split('/')[-2].lower().replace(' ', '')
+            profile = path.split("/")[-2].lower().replace(" ", "")
             paths.append((path, cls, profile))
         return paths
 
     @classmethod
-    def fetch_macos_path(cls):
+    def fetch_macos_path(cls) -> list:
         home = os.path.expanduser("~")
         paths = []  # (path, browser_class, profile)
         for path in glob.glob(
-            os.path.join(home, "Library/Application Support/Firefox/Profiles", "*", "places.sqlite")
+            os.path.join(
+                home,
+                "Library",
+                "Application Support",
+                "Firefox",
+                "Profiles",
+                "*",
+                "places.sqlite",
+            )
         ):
-            profile = path.split('/')[-2].lower().replace(' ', '')
+            profile = path.split("/")[-2].lower().replace(" ", "")
             paths.append((path, cls, profile))
         return paths
+
 
 class Chromium(Browser):
     SQL = """
@@ -64,19 +85,31 @@ class Chromium(Browser):
     """
 
     @classmethod
-    def fetch_linux_path(cls):
+    def fetch_linux_path(cls) -> list:
         home = os.path.expanduser("~")
         paths = []  # (path, browser_class, profile)
-        for path in glob.glob(os.path.join(home, ".config", "chromium", "*", "History")):
-            profile = path.split('/')[-2].lower().replace(' ', '')
+        for path in glob.glob(
+            os.path.join(home, ".config", "chromium", "*", "History")
+        ):
+            profile = path.split("/")[-2].lower().replace(" ", "")
             paths.append((path, cls, profile))
         return paths
 
     @classmethod
-    def fetch_macos_path(cls):
+    def fetch_macos_path(cls) -> list:
         home = os.path.expanduser("~")
         paths = []  # (path, browser_class, profile)
-        for path in glob.glob(os.path.join(home, "Library/Application Support/Google/Chrome/", "*", "History")):
-            profile = path.split('/')[-2].lower().replace(' ', '')
+        for path in glob.glob(
+            os.path.join(
+                home,
+                "Library",
+                "Application Support",
+                "Google",
+                "Chrome",
+                "*",
+                "History",
+            )
+        ):
+            profile = path.split("/")[-2].lower().replace(" ", "")
             paths.append((path, cls, profile))
         return paths

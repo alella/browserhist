@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="xps.browserhist",
-    version="0.3.5",
+    name="browserhist",
+    version="0.4.0",
     author="Ashoka Lella",
     packages=find_packages(),
     install_requires=[
@@ -12,6 +12,6 @@ setup(
         "coloredlogs"
     ],
     entry_points={
-        'console_scripts': ['browserhist = xps.browserhist.cli:cli']
+        'console_scripts': ['browserhist = browserhist.cli:cli']
     }
 )
